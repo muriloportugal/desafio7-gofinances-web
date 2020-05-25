@@ -1,11 +1,40 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { shade } from 'polished';
+
+interface UploadeFile {
+  isFinished?: boolean;
+}
 
 export const Container = styled.div`
   width: 100%;
   max-width: 736px;
   margin: 0 auto;
   padding: 40px 20px;
+`;
+
+export const Alert = styled.div<UploadeFile>`
+  visibility: hidden;
+  display: flex;
+  height: 0px;
+  width: 0px;
+  padding: unset;
+  opacity: 0;
+  align-items: center;
+  justify-content: center;
+  margin-top: 5px;
+  background-color: #12a454;
+  color: white;
+  transition: height 1s, width 1s, padding 1s, visibility 1s, opacity 0.5s ease-out;
+
+  ${props =>
+    props.isFinished &&
+    css`
+      visibility: visible;
+      height: 50px;
+      width: 100%;
+      padding: 10px;
+      opacity: 1;
+    `}
 `;
 
 export const Title = styled.h1`

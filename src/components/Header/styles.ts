@@ -4,6 +4,10 @@ interface ContainerProps {
   size?: 'small' | 'large';
 }
 
+interface LinkProps {
+  isSelected: boolean;
+}
+
 export const Container = styled.div<ContainerProps>`
   background: #5636d3;
   padding: 30px 0;
@@ -17,6 +21,14 @@ export const Container = styled.div<ContainerProps>`
     justify-content: space-between;
 
     nav {
+      display: flex;
+      align-items: center;
+
+      img {
+        width: 187px;
+        height: 32px;
+      }
+
       a {
         color: #fff;
         text-decoration: none;
@@ -29,6 +41,18 @@ export const Container = styled.div<ContainerProps>`
 
         &:hover {
           opacity: 0.6;
+
+          .bookmark {
+            visibility: visible;
+          }
+        }
+
+        .bookmark {
+          background-color: #ff872c;
+          width: 73px;
+          height: 2px;
+          margin-top: 9px;
+          visibility: hidden;
         }
       }
     }

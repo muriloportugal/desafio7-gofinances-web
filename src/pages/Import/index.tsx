@@ -7,7 +7,7 @@ import Header from '../../components/Header';
 import FileList from '../../components/FileList';
 import Upload from '../../components/Upload';
 
-import { Container, Title, ImportFileContainer, Footer } from './styles';
+import { Container, Title, ImportFileContainer, Footer, Alert } from './styles';
 
 import alert from '../../assets/alert.svg';
 import api from '../../services/api';
@@ -20,22 +20,44 @@ interface FileProps {
 
 const Import: React.FC = () => {
   const [uploadedFiles, setUploadedFiles] = useState<FileProps[]>([]);
+  const [uploadFinished, setUploadFinished] = useState(false);
   const history = useHistory();
 
   async function handleUpload(): Promise<void> {
-    // const data = new FormData();
+    const data = new FormData();
 
-    // TODO
+    uploadedFiles.forEach(file => data.append('file', file.file));
 
     try {
-      // await api.post('/transactions/import', data);
+      await api.post('/transactions/import', data, {
+        onUploadProgress: progressEvent => {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total,
+          );
+          console.log(progressEvent.total);
+          if (percentCompleted === 100) {
+            setUploadFinished(true);
+            setTimeout(() => {
+              setUploadFinished(false);
+            }, 2000);
+          }
+        },
+      });
     } catch (err) {
-      // console.log(err.response.error);
+      console.log(err.response.error);
     }
   }
 
   function submitFile(files: File[]): void {
-    // TODO
+    const newUploadedFiles: FileProps[] = files.map(file => {
+      return {
+        file,
+        name: file.name,
+        readableSize: file.size.toString(),
+      };
+    });
+
+    setUploadedFiles(newUploadedFiles);
   }
 
   return (
@@ -46,7 +68,9 @@ const Import: React.FC = () => {
         <ImportFileContainer>
           <Upload onUpload={submitFile} />
           {!!uploadedFiles.length && <FileList files={uploadedFiles} />}
-
+          <Alert isFinished={uploadFinished}>
+            <strong>Arquivo importado com sucesso!</strong>
+          </Alert>
           <Footer>
             <p>
               <img src={alert} alt="Alert" />
