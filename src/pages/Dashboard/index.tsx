@@ -46,8 +46,23 @@ const Dashboard: React.FC = () => {
         transactions: newTransactions,
         balance: newBalance,
       } = result.data;
-      setBalance(newBalance);
-      setTransactions(newTransactions);
+
+      const transactionsFormatted = newTransactions.map(
+        (transaction: Transaction) => ({
+          ...transaction,
+          formattedValue: formatValue(transaction.value),
+          formattedDate: formatDate(new Date(transaction.created_at)),
+        }),
+      );
+
+      const balanceFormatted = {
+        income: formatValue(newBalance.income),
+        outcome: formatValue(newBalance.outcome),
+        total: formatValue(newBalance.total),
+      };
+
+      setBalance(balanceFormatted);
+      setTransactions(transactionsFormatted);
     }
 
     loadTransactions();
@@ -63,27 +78,21 @@ const Dashboard: React.FC = () => {
               <p>Entradas</p>
               <img src={income} alt="Income" />
             </header>
-            <h1 data-testid="balance-income">
-              {formatValue(Number(balance.income))}
-            </h1>
+            <h1 data-testid="balance-income">{balance.income}</h1>
           </Card>
           <Card>
             <header>
               <p>Saídas</p>
               <img src={outcome} alt="Outcome" />
             </header>
-            <h1 data-testid="balance-outcome">
-              {formatValue(Number(balance.outcome))}
-            </h1>
+            <h1 data-testid="balance-outcome">{balance.outcome}</h1>
           </Card>
           <Card total>
             <header>
               <p>Total</p>
               <img src={total} alt="Total" />
             </header>
-            <h1 data-testid="balance-total">
-              {formatValue(Number(balance.total))}
-            </h1>
+            <h1 data-testid="balance-total">{balance.total}</h1>
           </Card>
         </CardContainer>
 
@@ -104,10 +113,10 @@ const Dashboard: React.FC = () => {
                   <td className="title">{transaction.title}</td>
                   <td className={transaction.type}>
                     {transaction.type === 'outcome' && '- '}
-                    {formatValue(Number(transaction.value))}
+                    {transaction.formattedValue}
                   </td>
                   <td>{transaction.category.title}</td>
-                  <td>{formatDate(new Date(transaction.created_at))}</td>
+                  <td>{transaction.formattedDate}</td>
                 </tr>
               ))}
             </tbody>

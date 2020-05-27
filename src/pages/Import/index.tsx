@@ -26,6 +26,8 @@ const Import: React.FC = () => {
   async function handleUpload(): Promise<void> {
     const data = new FormData();
 
+    if (!uploadedFiles.length) return;
+
     uploadedFiles.forEach(file => data.append('file', file.file));
 
     try {
@@ -34,7 +36,6 @@ const Import: React.FC = () => {
           const percentCompleted = Math.round(
             (progressEvent.loaded * 100) / progressEvent.total,
           );
-          console.log(progressEvent.total);
           if (percentCompleted === 100) {
             setUploadFinished(true);
             setTimeout(() => {
@@ -43,6 +44,8 @@ const Import: React.FC = () => {
           }
         },
       });
+
+      // history.push('/');
     } catch (err) {
       console.log(err.response.error);
     }
@@ -53,7 +56,7 @@ const Import: React.FC = () => {
       return {
         file,
         name: file.name,
-        readableSize: file.size.toString(),
+        readableSize: filesize(file.size),
       };
     });
 
